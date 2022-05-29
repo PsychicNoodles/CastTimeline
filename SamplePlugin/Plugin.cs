@@ -1,13 +1,12 @@
-﻿using Dalamud.Game.Command;
+﻿using Dalamud.Game;
+using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
 using System.Reflection;
 
-namespace SamplePlugin
-{
-    public sealed class Plugin : IDalamudPlugin
-    {
+namespace SamplePlugin {
+    public sealed partial class Plugin : IDalamudPlugin {
         public string Name => "Sample Plugin";
 
         private const string commandName = "/pmycommand";
@@ -16,11 +15,12 @@ namespace SamplePlugin
         private CommandManager CommandManager { get; init; }
         private Configuration Configuration { get; init; }
         private PluginUI PluginUi { get; init; }
+        
 
         public Plugin(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] CommandManager commandManager)
-        {
+            [RequiredVersion("1.0")] CommandManager commandManager) {
+
             this.PluginInterface = pluginInterface;
             this.CommandManager = commandManager;
 
@@ -32,8 +32,7 @@ namespace SamplePlugin
             var goatImage = this.PluginInterface.UiBuilder.LoadImage(imagePath);
             this.PluginUi = new PluginUI(this.Configuration, goatImage);
 
-            this.CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
-            {
+            this.CommandManager.AddHandler(commandName, new CommandInfo(OnCommand) {
                 HelpMessage = "A useful message to display in /xlhelp"
             });
 
@@ -41,25 +40,21 @@ namespace SamplePlugin
             this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             this.PluginUi.Dispose();
             this.CommandManager.RemoveHandler(commandName);
         }
 
-        private void OnCommand(string command, string args)
-        {
+        private void OnCommand(string command, string args) {
             // in response to the slash command, just display our main ui
             this.PluginUi.Visible = true;
         }
 
-        private void DrawUI()
-        {
+        private void DrawUI() {
             this.PluginUi.Draw();
         }
 
-        private void DrawConfigUI()
-        {
+        private void DrawConfigUI() {
             this.PluginUi.SettingsVisible = true;
         }
     }
